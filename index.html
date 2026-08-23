@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monan — Computer Science Graduate | Portfolio</title>
+<meta name="description" content="Monan — BSc Computer Science Graduate. Frontend, IT Support & Networking portfolio.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+
+<!-- ============ FIREBASE SDK (compat build — simplest to wire up) ============ -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<!-- ============ PAGE LOADER (shown while Firestore data loads) ============ -->
+<div class="page-loader" id="pageLoader">
+  <div class="loader-spinner"></div>
+  <p>Loading portfolio…</p>
+</div>
+
+<!-- ============ NAVBAR ============ -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="#home" class="nav-logo">Monan<span>.</span></a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#home" data-nav="home">Home</a></li>
+      <li><a href="#about" data-nav="about">About</a></li>
+      <li><a href="#skills" data-nav="skills">Skills</a></li>
+      <li><a href="#education" data-nav="education">Education</a></li>
+      <li><a href="#journey" data-nav="journey">Journey</a></li>
+      <li><a href="#projects" data-nav="projects">Projects</a></li>
+      <li><a href="#certificates" data-nav="certificates">Certificates</a></li>
+      <li><a href="#itlab" data-nav="itlab">IT Lab</a></li>
+      <li><a href="#resume" data-nav="resume">Resume</a></li>
+      <li><a href="#contact" data-nav="contact">Contact</a></li>
+    </ul>
+
+    <div class="nav-controls">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark and light mode">🌙</button>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HOME / HERO ============ -->
+<section class="hero" id="home">
+  <div class="container">
+    <div class="hero-photo-wrap">
+      <img src="assets/profile.jpg" alt="Monan — profile photo" class="hero-photo" onerror="this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22260%22%3E%3Crect width=%22200%22 height=%22260%22 fill=%22%23172547%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 fill=%22%237684a8%22 font-family=%22sans-serif%22 font-size=%2214%22 text-anchor=%22middle%22 dy=%22.3em%22%3EAdd profile.jpg%3C/text%3E%3C/svg%3E'">
+    </div>
+
+    <p class="hero-greeting">Hi, I'm Monan 👋</p>
+    <h1 class="hero-title">Computer Science Graduate</h1>
+    <p class="hero-subtitle">Frontend • IT Support • Networking</p>
+    <p class="hero-intro">I enjoy building practical digital solutions, solving technical problems and continuously developing my technical skills.</p>
+
+    <div class="hero-badges">
+      <span class="badge">HTML</span>
+      <span class="badge">CSS</span>
+      <span class="badge">JavaScript</span>
+      <span class="badge">SQL</span>
+      <span class="badge">Networking</span>
+      <span class="badge">Linux</span>
+    </div>
+
+    <div class="hero-buttons">
+      <a href="assets/Monan-Resume.pdf" class="btn btn-primary" id="downloadResumeBtn" download>⬇ Download Resume</a>
+      <a href="#contact" class="btn btn-outline" id="hireMeBtn">Hire Me</a>
+    </div>
+
+    <div class="hero-socials">
+      <a href="https://github.com/yourusername" target="_blank" rel="noopener" class="social-icon" aria-label="GitHub" id="githubLink">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.5 0 12.3c0 5.4 3.44 10 8.2 11.6.6.1.82-.27.82-.6v-2.1c-3.34.75-4.04-1.66-4.04-1.66-.55-1.44-1.33-1.83-1.33-1.83-1.08-.77.08-.75.08-.75 1.2.09 1.83 1.27 1.83 1.27 1.07 1.87 2.8 1.33 3.48 1.02.1-.79.42-1.33.76-1.64-2.67-.31-5.47-1.38-5.47-6.14 0-1.36.47-2.46 1.24-3.33-.12-.31-.54-1.57.12-3.28 0 0 1.01-.33 3.3 1.27a11.2 11.2 0 0 1 6 0c2.29-1.6 3.3-1.27 3.3-1.27.66 1.71.24 2.97.12 3.28.77.87 1.24 1.97 1.24 3.33 0 4.77-2.8 5.83-5.48 6.13.43.38.81 1.13.81 2.28v3.38c0 .33.22.71.83.6C20.57 22.3 24 17.7 24 12.3 24 5.5 18.63 0 12 0z"/></svg>
+      </a>
+      <a href="https://linkedin.com/in/yourusername" target="_blank" rel="noopener" class="social-icon" aria-label="LinkedIn" id="linkedinLink">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.15 1.45-2.15 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.8 0 0 .78 0 1.75v20.5C0 23.22.8 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.75V1.75C24 .78 23.2 0 22.22 0z"/></svg>
+      </a>
+      <a href="mailto:monan@example.com" class="social-icon" aria-label="Email" id="emailLink">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+      </a>
+    </div>
+
+    <div class="status-card" id="statusCard">
+      <div class="status-label">CURRENTLY</div>
+      <div class="status-role"><span class="status-dot"></span><span id="statusRole">Support Engineer</span></div>
+      <div class="status-focus" id="statusFocus">IT Support • Networking</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section class="about" id="about">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag">Get to know me</span>
+      <h2 class="section-title">About Me</h2>
+    </div>
+
+    <div class="about-content">
+      <div class="about-text reveal">
+        <p>I am a BSc Computer Science graduate interested in frontend development, IT support and networking. I enjoy learning through practical projects and building useful digital experiences.</p>
+        <p>My focus is on continuously improving my technical foundation — from writing clean frontend code to understanding how networks and systems work behind the scenes.</p>
+      </div>
+      <div class="about-cards reveal">
+        <div class="info-card">
+          <div class="icon">🎓</div>
+          <h4>Education</h4>
+          <p>BSc Computer Science, SASTRA Deemed University (2023–2026)</p>
+        </div>
+        <div class="info-card">
+          <div class="icon">💻</div>
+          <h4>Technical Interest</h4>
+          <p>Frontend development, networking fundamentals & IT troubleshooting</p>
+        </div>
+        <div class="info-card">
+          <div class="icon">🎯</div>
+          <h4>Current Focus</h4>
+          <p id="aboutCurrentFocus">IT Support • Networking</p>
+        </div>
+        <div class="info-card">
+          <div class="icon">🚀</div>
+          <h4>Career Goal</h4>
+          <p>Grow into a well-rounded IT professional bridging support, networking and development</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SKILLS ============ -->
+<section class="skills" id="skills">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag">What I know</span>
+      <h2 class="section-title">My Skills</h2>
+      <p class="section-sub">A practical, growing skill set spanning development, systems and networking.</p>
+    </div>
+    <div class="skills-grid reveal" id="skillsGrid"><!-- rendered by JS from Firestore --></div>
+  </div>
+</section>
+
+<!-- ============ EDUCATION ============ -->
+<section class="education" id="education">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag">Academic background</span>
+      <h2 class="section-title">Education</h2>
+    </div>
+
+    <div class="education-main reveal">
+      <div>
+        <h3>Bachelor of Science in Computer Science</h3>
+        <div class="edu-school">SASTRA Deemed to be University</div>
+        <div class="edu-years">2023 – 2026</div>
+      </div>
+      <span class="edu-badge">In Progress</span>
+    </div>
+
+    <div class="edu-detail-grid reveal">
+      <div class="info-card">
+        <h4>Relevant Subjects</h4>
+        <ul>
+          <li>Data Structures & Algorithms</li>
+          <li>Computer Networks</li>
+          <li>Database Management Systems</li>
+          <li>Operating Systems</li>
+          <li>Web Technologies</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h4>Academic Achievements</h4>
+        <ul id="eduAchievements">
+          <li>To be updated</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h4>Additional Learning</h4>
+        <ul id="eduAdditional">
+          <li>Self-paced networking & Linux practice</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MY JOURNEY ============ -->
+<section class="journey" id="journey">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag">The path so far</span>
+      <h2 class="section-title">My Journey</h2>
+      <p class="section-sub">Click any stage to explore more details, subjects, and certificates.</p>
+    </div>
+    <div class="journey-timeline reveal" id="journeyTimeline"><!-- rendered by JS from Firestore --></div>
+  </div>
+</section>
+
+<!-- ============ PROJECTS ============ -->
+<section class="projects" id="projects">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag">Things I've built</span>
+      <h2 class="section-title">Projects I've Built</h2>
+      <p class="section-sub">A mix of frontend, IT-support-oriented and dashboard-style projects.</p>
+    </div>
+    <div class="project-grid reveal" id="projectGrid"><!-- rendered by JS from Firestore --></div>
+  </div>
+</section>
+
+<!-- ============ CERTIFICATES ============ -->
+<section class="certificates" id="certificates">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag">Proof of learning</span>
+      <h2 class="section-title">Certificates & Achievements</h2>
+      <p class="section-sub">Filter certificates by category.</p>
+    </div>
+    <div class="cert-filters reveal" id="certFilters">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="school">School</button>
+      <button class="filter-btn" data-filter="college">College</button>
+      <button class="filter-btn" data-filter="professional">Professional</button>
+      <button class="filter-btn" data-filter="work">Work</button>
+    </div>
+    <div class="cert-grid reveal" id="certGrid"><!-- rendered by JS from Firestore --></div>
+  </div>
+</section>
+
+<!-- ============ IT TROUBLESHOOTING LAB ============ -->
+<section class="itlab" id="itlab">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag">Practical thinking</span>
+      <h2 class="section-title">IT Troubleshooting Lab</h2>
+      <p class="section-sub">A demonstration of how I approach and diagnose common IT and networking issues.</p>
+    </div>
+    <div class="itlab-layout reveal">
+      <div class="itlab-list" id="itlabList"><!-- rendered by JS --></div>
+      <div class="itlab-panel" id="itlabPanel"><!-- rendered by JS --></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RESUME ============ -->
+<section class="resume" id="resume">
+  <div class="container">
+    <div class="resume-box reveal">
+      <h2 class="section-title">Interested in my profile?</h2>
+      <p>Download my full resume to see my education, skills and experience in detail.</p>
+      <a href="assets/Monan-Resume.pdf" class="btn btn-primary" id="resumeSectionBtn" download>⬇ Download Resume</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section class="contact" id="contact">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag">Get in touch</span>
+      <h2 class="section-title">Let's Connect</h2>
+      <p class="section-sub">Open to opportunities in IT support, networking and frontend development.</p>
+    </div>
+
+    <div class="contact-layout reveal">
+      <div>
+        <div class="contact-info-list">
+          <div class="contact-info-item">
+            <div class="icon-circle">✉️</div>
+            <div>
+              <div class="label">Email</div>
+              <div class="value">monan@example.com</div>
+            </div>
+          </div>
+          <div class="contact-info-item">
+            <div class="icon-circle">💼</div>
+            <div>
+              <div class="label">LinkedIn</div>
+              <div class="value">linkedin.com/in/yourusername</div>
+            </div>
+          </div>
+          <div class="contact-info-item">
+            <div class="icon-circle">💻</div>
+            <div>
+              <div class="label">GitHub</div>
+              <div class="value">github.com/yourusername</div>
+            </div>
+          </div>
+        </div>
+        <a href="#contact" class="btn btn-primary" id="hireMeBtn2">Hire Me</a>
+      </div>
+
+      <form class="contact-form" id="contactForm">
+        <div class="form-group">
+          <label for="contactName">Name</label>
+          <input type="text" id="contactName" placeholder="Your name" required>
+        </div>
+        <div class="form-group">
+          <label for="contactMessage">Message</label>
+          <textarea id="contactMessage" rows="5" placeholder="Your message" required></textarea>
+        </div>
+        <div class="form-error" id="formError"></div>
+        <div class="form-success" id="formSuccess">Thanks! Your message has been noted. (Demo form — connect a backend to receive live messages.)</div>
+        <button type="submit" class="btn btn-primary">Send Message</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FINAL SECTION ============ -->
+<section class="final-section" id="finalSection">
+  <div class="container reveal">
+    <p>Thanks for exploring my portfolio.</p>
+    <button class="btn btn-outline" id="backToTopBtn">↑ Back to Top</button>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="container">
+    <div>© <span id="footerYear"></span> Monan. Built with HTML, CSS & JavaScript + Firebase.</div>
+    <div class="footer-links">
+      <a href="admin.html">🔒 Admin</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ CERTIFICATE / PROJECT MODAL ============ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box" id="modalBox">
+    <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+    <div id="modalInner"><!-- rendered by JS --></div>
+  </div>
+</div>
+
+<!-- ============ WELCOME POPUP ============ -->
+<div class="welcome-overlay" id="welcomeOverlay">
+  <div class="welcome-box">
+    <div id="welcomeStep1">
+      <h3>Thanks for visiting my portfolio! 👋</h3>
+      <p>I'd love to know who's exploring my work.<br>What should I call you?</p>
+      <input type="text" id="visitorNameInput" placeholder="Your Name" maxlength="40">
+      <button class="btn btn-primary" style="width:100%" id="enterPortfolioBtn">Enter Portfolio →</button>
+    </div>
+    <div id="welcomeStep2" style="display:none;">
+      <p class="welcome-msg" id="welcomeMsg"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TOAST ============ -->
+<div class="toast" id="toast"></div>
+
+<!-- ============ BACK TO TOP FAB ============ -->
+<button class="back-to-top-fab" id="backToTopFab" aria-label="Back to top">↑</button>
+
+<!-- ============ APP SCRIPTS (order matters) ============ -->
+<script src="firebase-config.js"></script>
+<script src="firestore-service.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
