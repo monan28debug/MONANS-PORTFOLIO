@@ -103,7 +103,17 @@ function initWelcomePopup() {
   }
   enterBtn.addEventListener('click', submitName);
   input.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitName(); });
-}
+
+  const closeBtn = document.getElementById('welcomeCloseBtn');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      overlay.classList.remove('show');
+      // Treat as an anonymous visit so the popup doesn't reappear this session
+      setVisitorNameSession('Guest');
+      logActivity('Portfolio Visit');
+    });
+  }
+    }
 
 /* ============================================================
    SECTION VISIBILITY
