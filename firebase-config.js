@@ -24,23 +24,15 @@
 
 // ---------- 1. FIREBASE CONFIG (REPLACE WITH YOUR OWN) ----------
 const firebaseConfig = {
-
   apiKey: "AIzaSyABqEtkZaogZF4qxDH_9kphjY7GC0eEFfg",
-
   authDomain: "monans-portfolio.firebaseapp.com",
-
   projectId: "monans-portfolio",
-
   storageBucket: "monans-portfolio.firebasestorage.app",
-
   messagingSenderId: "1021350987470",
-
   appId: "1:1021350987470:web:3a4ce7620e2584d1f4329f",
   measurementId: "G-W9CRGNW6SN"
 
 };
-
-
 
 // ---------- 2. CLOUDINARY CONFIG (REPLACE WITH YOUR OWN) ----------
 const CLOUDINARY_CONFIG = {
