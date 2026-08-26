@@ -23,19 +23,29 @@
    ============================================================ */
 
 // ---------- 1. FIREBASE CONFIG (REPLACE WITH YOUR OWN) ----------
-const FIREBASE_CONFIG = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+const firebaseConfig = {
+
+  apiKey: "AIzaSyABqEtkZaogZF4qxDH_9kphjY7GC0eEFfg",
+
+  authDomain: "monans-portfolio.firebaseapp.com",
+
+  projectId: "monans-portfolio",
+
+  storageBucket: "monans-portfolio.firebasestorage.app",
+
+  messagingSenderId: "1021350987470",
+
+  appId: "1:1021350987470:web:3a4ce7620e2584d1f4329f",
+  measurementId: "G-W9CRGNW6SN"
+
 };
+
+
 
 // ---------- 2. CLOUDINARY CONFIG (REPLACE WITH YOUR OWN) ----------
 const CLOUDINARY_CONFIG = {
-  cloudName: "YOUR_CLOUDINARY_CLOUD_NAME",       // e.g. "dxyzabc123"
-  uploadPreset: "YOUR_UNSIGNED_UPLOAD_PRESET"    // create an UNSIGNED preset in Cloudinary settings
+  cloudName: "pteupsgl",       // e.g. "dxyzabc123"
+  uploadPreset: "portfolio_upload"    // create an UNSIGNED preset in Cloudinary settings
 };
 
 /* ============================================================
