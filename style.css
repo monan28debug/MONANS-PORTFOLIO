@@ -876,7 +876,23 @@ section { padding: 100px 0; }
   text-align: center;
   box-shadow: var(--shadow-lg);
   animation: popIn 0.35s ease;
+  position: relative;
 }
+.welcome-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.welcome-close:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
 @keyframes popIn { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: scale(1); } }
 .welcome-box h3 { font-size: 1.15rem; margin-bottom: 10px; }
 .welcome-box p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px; }
