@@ -5,10 +5,14 @@
 
    FIRESTORE COLLECTION STRUCTURE:
    portfolio/
-     ├── settings/main        (section visibility toggles)
-     ├── settings/status       (current status card)
-     ├── settings/itlab_meta   (IT Lab master enable/disable)
+     ├── settings_main        (section visibility toggles)
+     ├── settings_status       (current status card)
+     ├── settings_itlab_meta   (IT Lab master enable/disable)
+     ├── settings_profile      (profile photo URL)
+     ├── settings_contact      (email / linkedin / github)
    skills/          (one doc per category: {category, items[]})
+   hobbies/         (one doc per hobby: {icon, title, description})
+   achievements/    (one doc per achievement: {title, date, description})
    journey/         (one doc per timeline stage)
    projects/        (one doc per project)
    certificates/    (one doc per certificate)
@@ -21,7 +25,11 @@ const FS = {
   SETTINGS_DOC: db.collection('portfolio').doc('settings_main'),
   STATUS_DOC: db.collection('portfolio').doc('settings_status'),
   ITLAB_META_DOC: db.collection('portfolio').doc('settings_itlab_meta'),
+  PROFILE_DOC: db.collection('portfolio').doc('settings_profile'),
+  CONTACT_DOC: db.collection('portfolio').doc('settings_contact'),
   SKILLS: db.collection('skills'),
+  HOBBIES: db.collection('hobbies'),
+  ACHIEVEMENTS: db.collection('achievements'),
   JOURNEY: db.collection('journey'),
   PROJECTS: db.collection('projects'),
   CERTS: db.collection('certificates'),
@@ -61,6 +69,14 @@ async function fsDelete(collectionRef, id) {
   await collectionRef.doc(id).delete();
 }
 
+/** Delete multiple docs by id array (batched) */
+async function fsDeleteMany(collectionRef, ids) {
+  if (!ids.length) return;
+  const batch = db.batch();
+  ids.forEach(id => batch.delete(collectionRef.doc(id)));
+  await batch.commit();
+}
+
 /** Get a single settings-style doc, with fallback default if missing */
 async function fsGetDoc(docRef, fallback) {
   try {
@@ -80,14 +96,14 @@ async function fsSetDoc(docRef, data) {
 
 /* ============================================================
    SEEDING DEFAULT DATA
-   Run once (from Admin, via a "Seed Default Data" action, or
-   automatically on first public load if collections are empty)
-   so a brand-new Firestore project isn't blank.
+   Runs once (auto-checked on public load) so a brand-new
+   Firestore project isn't blank.
    ============================================================ */
 
 const DEFAULT_SETTINGS = {
   home: true, about: true, skills: true, education: true, journey: true,
-  projects: true, certificates: true, itlab: true, resume: true, contact: true, final: true
+  hobbies: true, achievements: true, projects: true, certificates: true,
+  itlab: true, resume: true, contact: true, final: true
 };
 
 const DEFAULT_STATUS = {
@@ -95,6 +111,18 @@ const DEFAULT_STATUS = {
   company: 'Company Name',
   focus: 'IT Support • Networking',
   description: 'Currently working in IT Support'
+};
+
+const DEFAULT_PROFILE = {
+  photoUrl: 'assets/profile.jpg'
+};
+
+const DEFAULT_CONTACT = {
+  email: 'monan@example.com',
+  linkedin: 'https://linkedin.com/in/yourusername',
+  linkedinDisplay: 'linkedin.com/in/yourusername',
+  github: 'https://github.com/yourusername',
+  githubDisplay: 'github.com/yourusername'
 };
 
 const DEFAULT_SKILLS = [
@@ -125,6 +153,17 @@ const DEFAULT_SKILLS = [
     { name: 'VS Code', level: 'Working Knowledge' },
     { name: 'MS Excel', level: 'Familiar' }
   ]}
+];
+
+const DEFAULT_HOBBIES = [
+  { icon: '💻', title: 'Coding', description: 'Building small projects and exploring new tools.' },
+  { icon: '🌐', title: 'Networking Practice', description: 'Setting up home-lab network scenarios.' },
+  { icon: '📚', title: 'Reading', description: 'Tech blogs, documentation, and IT case studies.' },
+  { icon: '🎮', title: 'Gaming', description: 'Casual gaming for relaxation and problem-solving.' }
+];
+
+const DEFAULT_ACHIEVEMENTS = [
+  { title: 'To be updated', date: '', description: 'Add your achievements from the Admin dashboard.' }
 ];
 
 const DEFAULT_JOURNEY = [
@@ -202,32 +241,42 @@ const DEFAULT_ITLAB = [
     solution: 'Releasing/renewing the IP via DHCP resolves most cases; if conflicts persist, assign addresses carefully or check the DHCP scope.' }
 ];
 
-/** Seed Firestore with default content — only runs if collections are empty.
- *  Safe to call from both public site (read-only check) and Admin (explicit button). */
+/** Seed Firestore with default content — only runs if collections are empty. */
 async function seedFirestoreIfEmpty() {
   try {
     const skillsSnap = await FS.SKILLS.limit(1).get();
-    if (skillsSnap.empty) {
-      for (const cat of DEFAULT_SKILLS) await FS.SKILLS.add(cat);
-    }
+    if (skillsSnap.empty) for (const cat of DEFAULT_SKILLS) await FS.SKILLS.add(cat);
+
+    const hobbiesSnap = await FS.HOBBIES.limit(1).get();
+    if (hobbiesSnap.empty) for (const h of DEFAULT_HOBBIES) await FS.HOBBIES.add(h);
+
+    const achSnap = await FS.ACHIEVEMENTS.limit(1).get();
+    if (achSnap.empty) for (const a of DEFAULT_ACHIEVEMENTS) await FS.ACHIEVEMENTS.add(a);
+
     const journeySnap = await FS.JOURNEY.limit(1).get();
-    if (journeySnap.empty) {
-      for (const item of DEFAULT_JOURNEY) await FS.JOURNEY.add(item);
-    }
+    if (journeySnap.empty) for (const item of DEFAULT_JOURNEY) await FS.JOURNEY.add(item);
+
     const projectsSnap = await FS.PROJECTS.limit(1).get();
-    if (projectsSnap.empty) {
-      for (const p of DEFAULT_PROJECTS) await FS.PROJECTS.add(p);
-    }
+    if (projectsSnap.empty) for (const p of DEFAULT_PROJECTS) await FS.PROJECTS.add(p);
+
     const itlabSnap = await FS.ITLAB.limit(1).get();
-    if (itlabSnap.empty) {
-      for (const s of DEFAULT_ITLAB) await FS.ITLAB.add(s);
-    }
+    if (itlabSnap.empty) for (const s of DEFAULT_ITLAB) await FS.ITLAB.add(s);
+
     const settingsSnap = await FS.SETTINGS_DOC.get();
     if (!settingsSnap.exists) await FS.SETTINGS_DOC.set(DEFAULT_SETTINGS);
+
     const statusSnap = await FS.STATUS_DOC.get();
     if (!statusSnap.exists) await FS.STATUS_DOC.set(DEFAULT_STATUS);
+
     const itlabMetaSnap = await FS.ITLAB_META_DOC.get();
     if (!itlabMetaSnap.exists) await FS.ITLAB_META_DOC.set({ enabled: true });
+
+    const profileSnap = await FS.PROFILE_DOC.get();
+    if (!profileSnap.exists) await FS.PROFILE_DOC.set(DEFAULT_PROFILE);
+
+    const contactSnap = await FS.CONTACT_DOC.get();
+    if (!contactSnap.exists) await FS.CONTACT_DOC.set(DEFAULT_CONTACT);
+
     // Certificates intentionally NOT seeded — only Admin-uploaded certs should appear.
   } catch (e) {
     console.error('Seeding error (check Firestore rules / config):', e);

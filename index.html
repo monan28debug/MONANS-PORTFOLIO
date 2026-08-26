@@ -9,14 +9,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 
-<!-- ============ FIREBASE SDK (compat build — simplest to wire up) ============ -->
+<!-- ============ FIREBASE SDK (compat build) ============ -->
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
-<!-- ============ PAGE LOADER (shown while Firestore data loads) ============ -->
+<!-- ============ PAGE LOADER ============ -->
 <div class="page-loader" id="pageLoader">
   <div class="loader-spinner"></div>
   <p>Loading portfolio…</p>
@@ -33,6 +33,8 @@
       <li><a href="#skills" data-nav="skills">Skills</a></li>
       <li><a href="#education" data-nav="education">Education</a></li>
       <li><a href="#journey" data-nav="journey">Journey</a></li>
+      <li><a href="#hobbies" data-nav="hobbies">Hobbies</a></li>
+      <li><a href="#achievements" data-nav="achievements">Achievements</a></li>
       <li><a href="#projects" data-nav="projects">Projects</a></li>
       <li><a href="#certificates" data-nav="certificates">Certificates</a></li>
       <li><a href="#itlab" data-nav="itlab">IT Lab</a></li>
@@ -53,7 +55,7 @@
 <section class="hero" id="home">
   <div class="container">
     <div class="hero-photo-wrap">
-      <img src="assets/profile.jpg" alt="Monan — profile photo" class="hero-photo" onerror="this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22260%22%3E%3Crect width=%22200%22 height=%22260%22 fill=%22%23172547%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 fill=%22%237684a8%22 font-family=%22sans-serif%22 font-size=%2214%22 text-anchor=%22middle%22 dy=%22.3em%22%3EAdd profile.jpg%3C/text%3E%3C/svg%3E'">
+      <img src="assets/profile.jpg" alt="Monan — profile photo" class="hero-photo" id="heroPhoto" onerror="this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22260%22%3E%3Crect width=%22200%22 height=%22260%22 fill=%22%23172547%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 fill=%22%237684a8%22 font-family=%22sans-serif%22 font-size=%2214%22 text-anchor=%22middle%22 dy=%22.3em%22%3EAdd profile.jpg%3C/text%3E%3C/svg%3E'">
     </div>
 
     <p class="hero-greeting">Hi, I'm Monan 👋</p>
@@ -202,6 +204,30 @@
   </div>
 </section>
 
+<!-- ============ HOBBIES ============ -->
+<section class="hobbies" id="hobbies">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag">Beyond the screen</span>
+      <h2 class="section-title">Hobbies & Interests</h2>
+      <p class="section-sub">A few things I enjoy outside of coursework and projects.</p>
+    </div>
+    <div class="hobbies-grid reveal" id="hobbiesGrid"><!-- rendered by JS from Firestore --></div>
+  </div>
+</section>
+
+<!-- ============ ACHIEVEMENTS ============ -->
+<section class="achievements" id="achievements">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag">Milestones</span>
+      <h2 class="section-title">Achievements</h2>
+      <p class="section-sub">Recognitions and milestones along the way.</p>
+    </div>
+    <div class="achievements-list reveal" id="achievementsList"><!-- rendered by JS from Firestore --></div>
+  </div>
+</section>
+
 <!-- ============ PROJECTS ============ -->
 <section class="projects" id="projects">
   <div class="container">
@@ -275,21 +301,21 @@
             <div class="icon-circle">✉️</div>
             <div>
               <div class="label">Email</div>
-              <div class="value">monan@example.com</div>
+              <div class="value" id="contactEmailValue">monan@example.com</div>
             </div>
           </div>
           <div class="contact-info-item">
             <div class="icon-circle">💼</div>
             <div>
               <div class="label">LinkedIn</div>
-              <div class="value">linkedin.com/in/yourusername</div>
+              <div class="value" id="contactLinkedinValue">linkedin.com/in/yourusername</div>
             </div>
           </div>
           <div class="contact-info-item">
             <div class="icon-circle">💻</div>
             <div>
               <div class="label">GitHub</div>
-              <div class="value">github.com/yourusername</div>
+              <div class="value" id="contactGithubValue">github.com/yourusername</div>
             </div>
           </div>
         </div>
@@ -306,7 +332,6 @@
           <textarea id="contactMessage" rows="5" placeholder="Your message" required></textarea>
         </div>
         <div class="form-error" id="formError"></div>
-        <div class="form-success" id="formSuccess">Thanks! Your message has been noted. (Demo form — connect a backend to receive live messages.)</div>
         <button type="submit" class="btn btn-primary">Send Message</button>
       </form>
     </div>
@@ -360,7 +385,7 @@
 <!-- ============ BACK TO TOP FAB ============ -->
 <button class="back-to-top-fab" id="backToTopFab" aria-label="Back to top">↑</button>
 
-<!-- ============ APP SCRIPTS (order matters) ============ -->
+<!-- ============ APP SCRIPTS ============ -->
 <script src="firebase-config.js"></script>
 <script src="firestore-service.js"></script>
 <script src="script.js"></script>

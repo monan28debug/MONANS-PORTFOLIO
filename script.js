@@ -1,32 +1,19 @@
 /* ============================================================
-   MONAN — PORTFOLIO SCRIPT (Firebase / Firestore edition)
-   All content (skills, journey, projects, certificates, IT lab,
-   status, section visibility) is read live from Firestore.
-   Visitor name + activity logs are WRITTEN to Firestore too,
-   so Admin sees real cross-device analytics.
+   MONAN — PORTFOLIO SCRIPT (Firebase / Firestore edition v3)
+   All content read live from Firestore, including profile photo
+   and contact info. Visitor name + activity logs are written to
+   Firestore for real cross-device Admin analytics.
    ============================================================ */
 
-/* ---------- In-memory cache (populated from Firestore on load) ---------- */
 let CACHE = {
-  settings: {},
-  status: {},
-  skills: [],
-  journey: [],
-  projects: [],
-  certificates: [],
-  itlab: [],
-  itlabEnabled: true
+  settings: {}, status: {}, profile: {}, contact: {},
+  skills: [], hobbies: [], achievements: [], journey: [],
+  projects: [], certificates: [], itlab: [], itlabEnabled: true
 };
 
-/* ---------- Session-only visitor name (kept in sessionStorage, not personal data beyond name) ---------- */
 const VISITOR_NAME_KEY = 'mp_visitor_name_session';
-
-function getVisitorName() {
-  return sessionStorage.getItem(VISITOR_NAME_KEY) || '';
-}
-function setVisitorNameSession(name) {
-  sessionStorage.setItem(VISITOR_NAME_KEY, name);
-}
+function getVisitorName() { return sessionStorage.getItem(VISITOR_NAME_KEY) || ''; }
+function setVisitorNameSession(name) { sessionStorage.setItem(VISITOR_NAME_KEY, name); }
 
 /* ============================================================
    FIRESTORE WRITES — visitor + activity logging
@@ -43,21 +30,16 @@ async function logActivity(activity) {
   const name = getVisitorName() || 'Anonymous';
   try {
     await FS.ACTIVITY.add({
-      name,
-      activity,
+      name, activity,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       clientTime: new Date().toISOString()
     });
   } catch (e) { console.error('Could not log activity:', e); }
 }
 
-/* Track each main section viewed once per session using IntersectionObserver */
 const sectionActivityMap = {
-  about: 'About Viewed',
-  projects: 'Projects Viewed',
-  certificates: 'Certificate Viewed',
-  itlab: 'IT Lab Opened',
-  contact: 'Contact Viewed'
+  about: 'About Viewed', projects: 'Projects Viewed', certificates: 'Certificate Viewed',
+  itlab: 'IT Lab Opened', contact: 'Contact Viewed'
 };
 const trackedSections = new Set();
 function setupSectionTracking() {
@@ -66,14 +48,10 @@ function setupSectionTracking() {
       if (entry.isIntersecting) {
         const id = entry.target.id;
         const label = sectionActivityMap[id];
-        if (label && !trackedSections.has(id)) {
-          trackedSections.add(id);
-          logActivity(label);
-        }
+        if (label && !trackedSections.has(id)) { trackedSections.add(id); logActivity(label); }
       }
     });
   }, { threshold: 0.4 });
-
   Object.keys(sectionActivityMap).forEach(id => {
     const el = document.getElementById(id);
     if (el) observer.observe(el);
@@ -81,7 +59,7 @@ function setupSectionTracking() {
 }
 
 /* ============================================================
-   THEME (kept in localStorage — purely a UI preference, no personal data)
+   THEME
    ============================================================ */
 function initTheme() {
   const saved = localStorage.getItem('mp_theme') || 'dark';
@@ -104,14 +82,9 @@ function toggleTheme() {
 function initWelcomePopup() {
   const overlay = document.getElementById('welcomeOverlay');
   const existingName = getVisitorName();
-
-  if (existingName) {
-    logActivity('Portfolio Visit');
-    return;
-  }
+  if (existingName) { logActivity('Portfolio Visit'); return; }
 
   overlay.classList.add('show');
-
   const input = document.getElementById('visitorNameInput');
   const enterBtn = document.getElementById('enterPortfolioBtn');
   const step1 = document.getElementById('welcomeStep1');
@@ -128,7 +101,6 @@ function initWelcomePopup() {
     msg.style.display = 'block';
     setTimeout(() => overlay.classList.remove('show'), 1400);
   }
-
   enterBtn.addEventListener('click', submitName);
   input.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitName(); });
 }
@@ -140,7 +112,8 @@ function applySectionVisibility() {
   const settings = CACHE.settings;
   const sectionIdMap = {
     home: 'home', about: 'about', skills: 'skills', education: 'education',
-    journey: 'journey', projects: 'projects', certificates: 'certificates',
+    journey: 'journey', hobbies: 'hobbies', achievements: 'achievements',
+    projects: 'projects', certificates: 'certificates',
     itlab: 'itlab', resume: 'resume', contact: 'contact', final: 'finalSection'
   };
   Object.keys(sectionIdMap).forEach(key => {
@@ -166,6 +139,38 @@ function renderStatus() {
 }
 
 /* ============================================================
+   PROFILE PHOTO (from Firestore, admin-editable)
+   ============================================================ */
+function renderProfilePhoto() {
+  const photo = document.getElementById('heroPhoto');
+  if (photo && CACHE.profile.photoUrl) {
+    photo.src = CACHE.profile.photoUrl;
+  }
+}
+
+/* ============================================================
+   CONTACT INFO (from Firestore, admin-editable)
+   ============================================================ */
+function renderContactInfo() {
+  const c = CACHE.contact;
+  if (!c) return;
+
+  const emailVal = document.getElementById('contactEmailValue');
+  const linkedinVal = document.getElementById('contactLinkedinValue');
+  const githubVal = document.getElementById('contactGithubValue');
+  if (emailVal) emailVal.textContent = c.email || 'monan@example.com';
+  if (linkedinVal) linkedinVal.textContent = c.linkedinDisplay || c.linkedin || '';
+  if (githubVal) githubVal.textContent = c.githubDisplay || c.github || '';
+
+  const emailLink = document.getElementById('emailLink');
+  const linkedinLink = document.getElementById('linkedinLink');
+  const githubLink = document.getElementById('githubLink');
+  if (emailLink && c.email) emailLink.href = `mailto:${c.email}`;
+  if (linkedinLink && c.linkedin) linkedinLink.href = c.linkedin;
+  if (githubLink && c.github) githubLink.href = c.github;
+}
+
+/* ============================================================
    SKILLS RENDERING
    ============================================================ */
 function renderSkills() {
@@ -187,6 +192,43 @@ function renderSkills() {
 }
 
 /* ============================================================
+   HOBBIES RENDERING
+   ============================================================ */
+function renderHobbies() {
+  const grid = document.getElementById('hobbiesGrid');
+  if (!grid) return;
+  const hobbies = CACHE.hobbies;
+  if (!hobbies.length) { grid.innerHTML = `<div class="empty-state">No hobbies added yet.</div>`; return; }
+  grid.innerHTML = hobbies.map(h => `
+    <div class="hobby-card">
+      <div class="hobby-icon">${escapeHtml(h.icon || '⭐')}</div>
+      <h4>${escapeHtml(h.title)}</h4>
+      <p>${escapeHtml(h.description || '')}</p>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   ACHIEVEMENTS RENDERING
+   ============================================================ */
+function renderAchievements() {
+  const list = document.getElementById('achievementsList');
+  if (!list) return;
+  const achievements = CACHE.achievements;
+  if (!achievements.length) { list.innerHTML = `<div class="empty-state">No achievements added yet.</div>`; return; }
+  list.innerHTML = achievements.map(a => `
+    <div class="achievement-item">
+      <div class="ach-icon">🏆</div>
+      <div>
+        <h4>${escapeHtml(a.title)}</h4>
+        ${a.date ? `<div class="ach-date">${escapeHtml(a.date)}</div>` : ''}
+        <p>${escapeHtml(a.description || '')}</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
    JOURNEY TIMELINE RENDERING
    ============================================================ */
 function renderJourney() {
@@ -195,10 +237,10 @@ function renderJourney() {
   const journey = CACHE.journey.filter(j => j.enabled !== false);
   const certs = CACHE.certificates.filter(c => c.enabled !== false);
 
-  container.innerHTML = journey.map((item, idx) => {
+  container.innerHTML = journey.map((item) => {
     const relatedCerts = certs.filter(c => (c.category || '').toLowerCase() === (item.category || '').toLowerCase());
     return `
-    <div class="journey-item" data-idx="${idx}">
+    <div class="journey-item">
       <div class="journey-line">
         <div class="journey-dot"></div>
         <div class="journey-connector"></div>
@@ -234,7 +276,6 @@ function renderJourney() {
   container.querySelectorAll('.journey-item').forEach(el => {
     el.querySelector('.journey-header').addEventListener('click', () => el.classList.toggle('active'));
   });
-
   container.querySelectorAll('.mini-cert').forEach(el => {
     el.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -253,10 +294,7 @@ function renderProjects() {
   if (!grid) return;
   const projects = CACHE.projects.filter(p => p.enabled !== false);
 
-  if (!projects.length) {
-    grid.innerHTML = `<div class="empty-state">No projects to display yet.</div>`;
-    return;
-  }
+  if (!projects.length) { grid.innerHTML = `<div class="empty-state">No projects to display yet.</div>`; return; }
 
   grid.innerHTML = projects.map(p => `
     <div class="project-card">
@@ -265,9 +303,7 @@ function renderProjects() {
         <div class="project-category">${escapeHtml(p.category)}</div>
         <h4>${escapeHtml(p.title)}</h4>
         <p>${escapeHtml(p.description)}</p>
-        <div class="project-tech">
-          ${(p.technologies || []).map(t => `<span class="tech-tag">${escapeHtml(t)}</span>`).join('')}
-        </div>
+        <div class="project-tech">${(p.technologies || []).map(t => `<span class="tech-tag">${escapeHtml(t)}</span>`).join('')}</div>
         <div class="project-links">
           <button class="btn btn-primary btn-small view-project-btn" data-id="${p.id}">View Project</button>
         </div>
@@ -291,10 +327,7 @@ function openProjectModal(p) {
       <h3>${escapeHtml(p.title)}</h3>
       <div class="modal-meta"><span>${escapeHtml(p.category)}</span></div>
       <p>${escapeHtml(p.description)}</p>
-      ${p.features && p.features.length ? `
-        <h5>Features</h5>
-        <ul>${p.features.map(f => `<li>${escapeHtml(f)}</li>`).join('')}</ul>
-      ` : ''}
+      ${p.features && p.features.length ? `<h5>Features</h5><ul>${p.features.map(f => `<li>${escapeHtml(f)}</li>`).join('')}</ul>` : ''}
       <h5>Technologies</h5>
       <div class="project-tech">${(p.technologies || []).map(t => `<span class="tech-tag">${escapeHtml(t)}</span>`).join('')}</div>
       <div class="modal-actions">
@@ -317,10 +350,7 @@ function renderCertificates() {
   const certs = CACHE.certificates.filter(c => c.enabled !== false);
   const filtered = currentCertFilter === 'all' ? certs : certs.filter(c => (c.category || '').toLowerCase() === currentCertFilter);
 
-  if (!filtered.length) {
-    grid.innerHTML = `<div class="empty-state">No certificates in this category yet. Certificates are added by Admin.</div>`;
-    return;
-  }
+  if (!filtered.length) { grid.innerHTML = `<div class="empty-state">No certificates in this category yet. Certificates are added by Admin.</div>`; return; }
 
   grid.innerHTML = filtered.map(c => `
     <div class="cert-card" data-id="${c.id}">
@@ -375,16 +405,10 @@ function setupCertFilters() {
 }
 
 /* ============================================================
-   MODAL (shared for projects + certs)
+   MODAL
    ============================================================ */
-function showModal() {
-  document.getElementById('modalOverlay').classList.add('show');
-  document.body.style.overflow = 'hidden';
-}
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('show');
-  document.body.style.overflow = '';
-}
+function showModal() { document.getElementById('modalOverlay').classList.add('show'); document.body.style.overflow = 'hidden'; }
+function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); document.body.style.overflow = ''; }
 function setupModal() {
   document.getElementById('modalClose').addEventListener('click', closeModal);
   document.getElementById('modalOverlay').addEventListener('click', (e) => { if (e.target.id === 'modalOverlay') closeModal(); });
@@ -410,19 +434,11 @@ function renderITLab() {
   const panel = document.getElementById('itlabPanel');
   if (!list || !panel) return;
 
-  if (!scenarios.length) {
-    list.innerHTML = '';
-    panel.innerHTML = `<div class="itlab-empty">No scenarios available right now.</div>`;
-    return;
-  }
+  if (!scenarios.length) { list.innerHTML = ''; panel.innerHTML = `<div class="itlab-empty">No scenarios available right now.</div>`; return; }
 
-  list.innerHTML = scenarios.map(s => `
-    <button class="itlab-scenario-btn ${s.id === currentScenarioId ? 'active' : ''}" data-id="${s.id}">${escapeHtml(s.title)}</button>
-  `).join('');
+  list.innerHTML = scenarios.map(s => `<button class="itlab-scenario-btn ${s.id === currentScenarioId ? 'active' : ''}" data-id="${s.id}">${escapeHtml(s.title)}</button>`).join('');
 
-  if (!currentScenarioId || !scenarios.find(s => s.id === currentScenarioId)) {
-    currentScenarioId = scenarios[0].id;
-  }
+  if (!currentScenarioId || !scenarios.find(s => s.id === currentScenarioId)) currentScenarioId = scenarios[0].id;
   renderScenarioPanel(scenarios.find(s => s.id === currentScenarioId));
 
   list.querySelectorAll('.itlab-scenario-btn').forEach(btn => {
@@ -442,10 +458,7 @@ function renderScenarioPanel(s) {
     <h3>${escapeHtml(s.title)}</h3>
     <div class="itlab-block"><h5>Problem</h5><p>${escapeHtml(s.problem)}</p></div>
     <div class="itlab-block"><h5>Possible Cause</h5><p>${escapeHtml(s.cause)}</p></div>
-    <div class="itlab-block">
-      <h5>Troubleshooting Steps</h5>
-      <ol>${(s.steps || []).map(step => `<li>${escapeHtml(step)}</li>`).join('')}</ol>
-    </div>
+    <div class="itlab-block"><h5>Troubleshooting Steps</h5><ol>${(s.steps || []).map(step => `<li>${escapeHtml(step)}</li>`).join('')}</ol></div>
     <button class="btn btn-outline btn-small" id="showSolutionBtn">Show Solution</button>
     <div class="itlab-solution" id="itlabSolution"><h5>Solution</h5><p>${escapeHtml(s.solution)}</p></div>
   `;
@@ -455,7 +468,8 @@ function renderScenarioPanel(s) {
 }
 
 /* ============================================================
-   CONTACT FORM
+   CONTACT FORM (demo success message box removed per request —
+   form still validates, resets, and logs activity silently)
    ============================================================ */
 function setupContactForm() {
   const form = document.getElementById('contactForm');
@@ -465,15 +479,12 @@ function setupContactForm() {
     const name = document.getElementById('contactName').value.trim();
     const message = document.getElementById('contactMessage').value.trim();
     const errorEl = document.getElementById('formError');
-    const successEl = document.getElementById('formSuccess');
 
     if (!name || !message) {
       errorEl.textContent = 'Please fill in both your name and message.';
-      successEl.classList.remove('show');
       return;
     }
     errorEl.textContent = '';
-    successEl.classList.add('show');
     form.reset();
     logActivity('Sent a message via Contact form');
   });
@@ -501,11 +512,7 @@ function setupHireMe() {
 function setupNav() {
   const hamburger = document.getElementById('hamburger');
   const navLinks = document.getElementById('navLinks');
-
-  hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('open');
-    navLinks.classList.toggle('open');
-  });
+  hamburger.addEventListener('click', () => { hamburger.classList.toggle('open'); navLinks.classList.toggle('open'); });
   navLinks.querySelectorAll('a').forEach(link => {
     link.addEventListener('click', () => { hamburger.classList.remove('open'); navLinks.classList.remove('open'); });
   });
@@ -541,9 +548,7 @@ function setupBackToTop() {
 function setupScrollReveal() {
   const items = document.querySelectorAll('.reveal');
   const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
-    });
+    entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } });
   }, { threshold: 0.12 });
   items.forEach(el => observer.observe(el));
 }
@@ -560,13 +565,16 @@ function escapeHtml(str) {
    FIRESTORE DATA LOADING
    ============================================================ */
 async function loadAllData() {
-  // Seed default content into Firestore if this is a brand new project
   await seedFirestoreIfEmpty();
 
-  const [settings, status, skills, journey, projects, certificates, itlab, itlabMeta] = await Promise.all([
+  const [settings, status, profile, contact, skills, hobbies, achievements, journey, projects, certificates, itlab, itlabMeta] = await Promise.all([
     fsGetDoc(FS.SETTINGS_DOC, DEFAULT_SETTINGS),
     fsGetDoc(FS.STATUS_DOC, DEFAULT_STATUS),
+    fsGetDoc(FS.PROFILE_DOC, DEFAULT_PROFILE),
+    fsGetDoc(FS.CONTACT_DOC, DEFAULT_CONTACT),
     fsGetAll(FS.SKILLS),
+    fsGetAll(FS.HOBBIES),
+    fsGetAll(FS.ACHIEVEMENTS),
     fsGetAll(FS.JOURNEY, 'order'),
     fsGetAll(FS.PROJECTS),
     fsGetAll(FS.CERTS),
@@ -576,7 +584,11 @@ async function loadAllData() {
 
   CACHE.settings = settings;
   CACHE.status = status;
+  CACHE.profile = profile;
+  CACHE.contact = contact;
   CACHE.skills = skills;
+  CACHE.hobbies = hobbies;
+  CACHE.achievements = achievements;
   CACHE.journey = journey;
   CACHE.projects = projects;
   CACHE.certificates = certificates;
@@ -586,10 +598,7 @@ async function loadAllData() {
 
 function hideLoader() {
   const loader = document.getElementById('pageLoader');
-  if (loader) {
-    loader.classList.add('hide');
-    setTimeout(() => loader.remove(), 500);
-  }
+  if (loader) { loader.classList.add('hide'); setTimeout(() => loader.remove(), 500); }
 }
 
 /* ============================================================
@@ -609,7 +618,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   applySectionVisibility();
   renderStatus();
+  renderProfilePhoto();
+  renderContactInfo();
   renderSkills();
+  renderHobbies();
+  renderAchievements();
   renderJourney();
   renderProjects();
   renderCertificates();

@@ -405,6 +405,32 @@ a { color: inherit; }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* ---------- Visitor table checkboxes + bulk actions ---------- */
+.data-table th.checkbox-col, .data-table td.checkbox-col { width: 36px; text-align: center; }
+.data-table input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent-blue); }
+.bulk-actions-bar {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--accent-blue-soft);
+  border: 1px solid var(--accent-blue);
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  margin-bottom: 14px;
+  font-size: 0.85rem;
+  color: var(--accent-cyan);
+}
+.bulk-actions-bar.show { display: flex; }
+
+/* ---------- Profile photo preview (Admin > Status/Profile panel) ---------- */
+.profile-photo-preview {
+  width: 100px; height: 130px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  margin-top: 10px;
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
   .stat-grid { grid-template-columns: repeat(2, 1fr); }

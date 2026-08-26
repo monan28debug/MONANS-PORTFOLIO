@@ -927,6 +927,46 @@ section { padding: 100px 0; }
 @keyframes loaderSpin { to { transform: rotate(360deg); } }
 .page-loader p { color: var(--text-muted); font-size: 0.9rem; }
 
+/* ---------- Hobbies & Achievements ---------- */
+.hobbies-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+.hobby-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 22px 18px;
+  text-align: center;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+}
+.hobby-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--accent-blue); }
+.hobby-card .hobby-icon { font-size: 1.8rem; margin-bottom: 10px; }
+.hobby-card h4 { font-size: 0.95rem; margin-bottom: 6px; }
+.hobby-card p { color: var(--text-secondary); font-size: 0.82rem; }
+
+.achievements-list { display: flex; flex-direction: column; gap: 14px; max-width: 760px; margin: 0 auto; }
+.achievement-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 18px 22px;
+  transition: border-color var(--transition-fast);
+}
+.achievement-item:hover { border-color: var(--accent-cyan); }
+.achievement-item .ach-icon {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--accent-blue-soft);
+  color: var(--accent-cyan);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.05rem;
+}
+.achievement-item h4 { font-size: 0.98rem; margin-bottom: 4px; }
+.achievement-item .ach-date { font-size: 0.76rem; color: var(--text-muted); margin-bottom: 6px; }
+.achievement-item p { color: var(--text-secondary); font-size: 0.88rem; }
+
 /* ---------- Back to top ---------- */
 .back-to-top-fab {
   position: fixed;
@@ -951,6 +991,7 @@ section { padding: 100px 0; }
    RESPONSIVE
    ============================================================ */
 @media (max-width: 900px) {
+  .hobbies-grid { grid-template-columns: repeat(2, 1fr); }
   .about-content { grid-template-columns: 1fr; }
   .skills-grid { grid-template-columns: repeat(2, 1fr); }
   .project-grid { grid-template-columns: repeat(2, 1fr); }
@@ -981,6 +1022,7 @@ section { padding: 100px 0; }
 }
 
 @media (max-width: 600px) {
+  .hobbies-grid { grid-template-columns: 1fr; }
   .skills-grid, .grid-3, .grid-4, .grid-2 { grid-template-columns: 1fr; }
   .project-grid { grid-template-columns: 1fr; }
   .cert-grid { grid-template-columns: 1fr; }

@@ -6,15 +6,16 @@
 // paste this entire file → Publish.
 //
 // LOGIC:
-// - Public content (portfolio settings, skills, journey, projects,
-//   certificates, IT lab) is readable by EVERYONE (no login needed) —
-//   required so the public index.html can display it.
+// - Public content (portfolio settings, profile photo, contact info,
+//   skills, hobbies, achievements, journey, projects, certificates,
+//   IT lab) is readable by EVERYONE (no login needed) — required so
+//   the public index.html can display it.
 // - Only an authenticated user (i.e. you, logged into admin.html via
 //   Firebase Auth) can WRITE to that content.
 // - Visitors / activity logs can be created by ANYONE (so the public
 //   welcome popup and activity tracking work without login), but can
-//   only be READ or DELETED by an authenticated admin — so visitor
-//   names/activity stay admin-only, matching the brief.
+//   only be READ, UPDATED, or DELETED by an authenticated admin — so
+//   visitor names/activity stay admin-only.
 // ============================================================
 
 rules_version = '2';
@@ -26,14 +27,22 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // Portfolio settings (section visibility, current status, IT lab master toggle)
+    // Portfolio settings (visibility, status, IT lab toggle, profile photo, contact info)
     match /portfolio/{docId} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
-    // Skills, Journey, Projects, Certificates, IT Lab scenarios — public read, admin write
+    // Skills, Hobbies, Achievements, Journey, Projects, Certificates, IT Lab — public read, admin write
     match /skills/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /hobbies/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /achievements/{docId} {
       allow read: if true;
       allow write: if isAdmin();
     }
@@ -55,7 +64,7 @@ service cloud.firestore {
     }
 
     // Visitors + Activity — anyone can CREATE (so tracking works for
-    // unauthenticated public visitors), only admin can READ or DELETE
+    // unauthenticated public visitors), only admin can READ, UPDATE or DELETE
     match /visitors/{docId} {
       allow create: if true;
       allow read, update, delete: if isAdmin();
