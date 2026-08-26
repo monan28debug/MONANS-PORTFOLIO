@@ -74,7 +74,6 @@
 
     <div class="hero-buttons">
       <a href="assets/Monan-Resume.pdf" class="btn btn-primary" id="downloadResumeBtn" download>⬇ Download Resume</a>
-      <a href="#contact" class="btn btn-outline" id="hireMeBtn">Hire Me</a>
     </div>
 
     <div class="hero-socials">
@@ -294,37 +293,33 @@
       <p class="section-sub">Open to opportunities in IT support, networking and frontend development.</p>
     </div>
 
-    <div class="contact-layout reveal">
+    <div class="contact-layout reveal" style="grid-template-columns: 1fr; max-width: 480px; margin: 0 auto;">
       <div>
         <div class="contact-info-list">
-          <div class="contact-info-item">
+          <a class="contact-info-item" id="contactEmailBox" href="#">
             <div class="icon-circle">✉️</div>
             <div>
               <div class="label">Email</div>
               <div class="value" id="contactEmailValue">monan@example.com</div>
             </div>
-          </div>
-          <div class="contact-info-item">
+          </a>
+          <a class="contact-info-item" id="contactLinkedinBox" href="#" target="_blank" rel="noopener">
             <div class="icon-circle">💼</div>
             <div>
               <div class="label">LinkedIn</div>
               <div class="value" id="contactLinkedinValue">linkedin.com/in/yourusername</div>
             </div>
-          </div>
-          <div class="contact-info-item">
+          </a>
+          <a class="contact-info-item" id="contactGithubBox" href="#" target="_blank" rel="noopener">
             <div class="icon-circle">💻</div>
             <div>
               <div class="label">GitHub</div>
               <div class="value" id="contactGithubValue">github.com/yourusername</div>
             </div>
-          </div>
+          </a>
         </div>
-        <a href="#contact" class="btn btn-primary" id="hireMeBtn2">Hire Me</a>
+        <p class="contact-hint">If you'd like to contact me, just tap one of the options above.</p>
       </div>
-
-<form class="contact-form" id="contactForm">
-        <button type="submit" class="btn btn-primary">Send Message</button>
-</form>
     </div>
   </div>
 </section>

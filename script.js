@@ -168,6 +168,14 @@ function renderContactInfo() {
   if (emailLink && c.email) emailLink.href = `mailto:${c.email}`;
   if (linkedinLink && c.linkedin) linkedinLink.href = c.linkedin;
   if (githubLink && c.github) githubLink.href = c.github;
+
+  // Contact section boxes — tapping opens email app / LinkedIn / GitHub directly
+  const emailBox = document.getElementById('contactEmailBox');
+  const linkedinBox = document.getElementById('contactLinkedinBox');
+  const githubBox = document.getElementById('contactGithubBox');
+  if (emailBox && c.email) emailBox.href = `mailto:${c.email}`;
+  if (linkedinBox && c.linkedin) linkedinBox.href = c.linkedin;
+  if (githubBox && c.github) githubBox.href = c.github;
 }
 
 /* ============================================================
@@ -468,31 +476,26 @@ function renderScenarioPanel(s) {
 }
 
 /* ============================================================
-   CONTACT FORM (demo success message box removed per request —
-   form still validates, resets, and logs activity silently)
+   CONTACT — no form. Tapping Email/LinkedIn/GitHub boxes
+   opens the visitor's email app or the relevant profile link,
+   and logs the click as activity for Admin.
    ============================================================ */
-function setupContactForm() {
-  const form = document.getElementById('contactForm');
-  if (!form) return;
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    logActivity('Sent a message via Contact form');
-  });
+function setupContactBoxTracking() {
+  const emailBox = document.getElementById('contactEmailBox');
+  const linkedinBox = document.getElementById('contactLinkedinBox');
+  const githubBox = document.getElementById('contactGithubBox');
+  if (emailBox) emailBox.addEventListener('click', () => logActivity('Tapped Email contact box'));
+  if (linkedinBox) linkedinBox.addEventListener('click', () => logActivity('Tapped LinkedIn contact box'));
+  if (githubBox) githubBox.addEventListener('click', () => logActivity('Tapped GitHub contact box'));
 }
 
 /* ============================================================
-   RESUME DOWNLOAD TRACKING + HIRE ME
+   RESUME DOWNLOAD TRACKING
    ============================================================ */
 function setupResumeTracking() {
   ['downloadResumeBtn', 'resumeSectionBtn'].forEach(id => {
     const btn = document.getElementById(id);
     if (btn) btn.addEventListener('click', () => logActivity('Resume Download'));
-  });
-}
-function setupHireMe() {
-  ['hireMeBtn', 'hireMeBtn2'].forEach(id => {
-    const btn = document.getElementById(id);
-    if (btn) btn.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('contact').scrollIntoView({ behavior: 'smooth' }); });
   });
 }
 
@@ -620,9 +623,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderITLab();
 
   setupModal();
-  setupContactForm();
+  setupContactBoxTracking();
   setupResumeTracking();
-  setupHireMe();
   setupNav();
   setupBackToTop();
   setupScrollReveal();
