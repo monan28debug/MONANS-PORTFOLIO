@@ -476,16 +476,6 @@ function setupContactForm() {
   if (!form) return;
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const name = document.getElementById('contactName').value.trim();
-    const message = document.getElementById('contactMessage').value.trim();
-    const errorEl = document.getElementById('formError');
-
-    if (!name || !message) {
-      errorEl.textContent = 'Please fill in both your name and message.';
-      return;
-    }
-    errorEl.textContent = '';
-    form.reset();
     logActivity('Sent a message via Contact form');
   });
 }
