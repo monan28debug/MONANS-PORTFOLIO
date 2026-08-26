@@ -23,7 +23,7 @@
    ============================================================ */
 
 // ---------- 1. FIREBASE CONFIG (REPLACE WITH YOUR OWN) ----------
-const firebaseConfig = {
+const FIREBASE_CONFIG = {
   apiKey: "AIzaSyABqEtkZaogZF4qxDH_9kphjY7GC0eEFfg",
   authDomain: "monans-portfolio.firebaseapp.com",
   projectId: "monans-portfolio",
